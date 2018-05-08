@@ -44,6 +44,9 @@ RSpec.describe Factory do
     it 'posible getting access to instance attr by [0]' do
       expect(person[1]).to eq 'LA, Greenwood Sq 223'
     end
+  end
+  describe 'instance_methods' do
+    let(:person) { Person.new('Jane Doe', 'LA, Greenwood Sq 223') }
 
     it 'each method return instance_vars values' do
       str = []
@@ -51,11 +54,25 @@ RSpec.describe Factory do
       expect(str).to eq ['Jane Doe', 'LA, Greenwood Sq 223']
     end
 
-    it 'each method return instance_vars values' do
+    it 'each_pair method return keys and values of instance_vars' do
       str = []
       person.each_pair { |k, v| str << [k, v] }
       expect(str).to eq [[:name, 'Jane Doe'],
                          [:address, 'LA, Greenwood Sq 223']]
+    end
+
+    it 'to_s and inspect methods return instance in string form' do
+      expect(person.to_s).to eq "<Person  name='Jane Doe' address='LA, Greenwood Sq 223'>"
+      expect(person.inspect).to eq "<Person  name='Jane Doe' address='LA, Greenwood Sq 223'>"
+    end
+
+    it 'members method return array of instance_vars' do
+      expect(person.members).to eq [:name, :address]
+    end
+
+    it 'size and length methods return count of instance_vars' do
+      expect(person.size).to eq(2)
+      expect(person.length).to eq(2)
     end
   end
 end
