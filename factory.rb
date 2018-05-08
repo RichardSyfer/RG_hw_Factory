@@ -4,7 +4,7 @@ class Factory
       attr_accessor *attributes
 
       define_method :initialize do |*args|
-        fail 'Error number of arguments' if attributes.count != args.count
+        raise 'Error number of arguments' if attributes.count != args.count
         attributes.zip(args).each do |inst_attr, val|
           send("#{inst_attr}=", val)
         end
@@ -17,9 +17,16 @@ class Factory
       class_eval &block if block_given?
 
       define_method :each do |&block|
-        attributes.each do |attr|
-          block.call(send(attr))
+        attributes.each { |attr| block.call(send(attr)) }
+      end
+
+      define_method :each_pair do |&block|
+        if block
+          attributes.each { |attr| block.call([attr, send(attr)]) }
+        else
+          self
         end
+
       end
     end
   end
@@ -32,5 +39,4 @@ end
 # end
 
 # p pf = Person.new('Edward', 'LA')
-# p pf.about
-# pf.each {|x| puts x }
+# pf.each_pair { |attr, val| p "#{attr} - #{val}" }

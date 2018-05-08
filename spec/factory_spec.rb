@@ -1,8 +1,9 @@
 require './factory'
 
-RSpec.describe 'Factory' do
+RSpec.describe Factory do
   before(:all) do
-    Person = Factory.new(:name, :address) do
+    # Person = Factory.new(:name, :address) do
+    Person = described_class.new(:name, :address) do
       def about
         @name
       end
@@ -41,7 +42,20 @@ RSpec.describe 'Factory' do
     end
 
     it 'posible getting access to instance attr by [0]' do
-      expect(person[1]).to eq 'LA, Greenwood Sq 22'
+      expect(person[1]).to eq 'LA, Greenwood Sq 223'
+    end
+
+    it 'each method return instance_vars values' do
+      str = []
+      person.each { |x| str << x }
+      expect(str).to eq ['Jane Doe', 'LA, Greenwood Sq 223']
+    end
+
+    it 'each method return instance_vars values' do
+      str = []
+      person.each_pair { |k, v| str << [k, v] }
+      expect(str).to eq [[:name, 'Jane Doe'],
+                         [:address, 'LA, Greenwood Sq 223']]
     end
   end
 end
