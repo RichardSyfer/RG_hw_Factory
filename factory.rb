@@ -15,16 +15,22 @@ class Factory
       end
 
       class_eval &block if block_given?
+
+      define_method :each do |&block|
+        attributes.each do |attr|
+          block.call(send(attr))
+        end
+      end
     end
   end
 end
 
 # Person = Factory.new(:name, :address) do
-#   def print
-#     @name.to_s
+#   def about
+#     @name
 #   end
 # end
 
-# p pf = Person.new('Edward', 'LA', '1')
-# p pf.print
-# p pf.class
+# p pf = Person.new('Edward', 'LA')
+# p pf.about
+# pf.each {|x| puts x }
