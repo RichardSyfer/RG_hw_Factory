@@ -62,8 +62,8 @@ RSpec.describe Factory do
     end
 
     it 'to_s and inspect methods return instance in string form' do
-      expect(person.to_s).to eq "<Person  name='Jane Doe' address='LA, Greenwood Sq 223'>"
-      expect(person.inspect).to eq "<Person  name='Jane Doe' address='LA, Greenwood Sq 223'>"
+      expect(person.to_s).to eq "<factory Person  name='Jane Doe' address='LA, Greenwood Sq 223'>"
+      expect(person.inspect).to eq "<factory Person  name='Jane Doe' address='LA, Greenwood Sq 223'>"
     end
 
     it 'members method return array of instance_vars' do

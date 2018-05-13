@@ -10,8 +10,8 @@ class Factory
         end
       end
 
-      define_method :[] do |argument|
-        argument.is_a?(Numeric) ? send(attributes[argument]) : send(argument)
+      define_method :[] do |arg|
+        arg.is_a?(Numeric) ? send(attributes[arg]) : send(arg)
       end
 
       class_eval &block if block_given?
@@ -26,38 +26,23 @@ class Factory
         else
           self
         end
-
       end
 
       define_method :to_s do
         str = ''
         each_pair{ |attr, val| str += " #{attr}=\'#{val}\'" }
-        "<#{self.class} #{str}>"
+        "<factory #{self.class} #{str}>"
       end
-      alias :inspect :to_s
+      alias_method :inspect, :to_s
 
       define_method :members do
-       attributes
+        attributes
       end
 
       define_method :size do
-       attributes.count
+        attributes.count
       end
-      alias :length :size
+      alias_method :length, :size
     end
   end
 end
-
-# Person = Factory.new(:name, :address) do
-#   def about
-#     @name
-#   end
-# end
-
-# p pf = Person.new('Edward', 'LA')
-# # pf.each_pair { |attr, val| p "#{attr} - #{val}" }
-# # p pf.to_s
-# # p pf.inspect
-# p pf.members
-# p pf.size
-# p pf.length
