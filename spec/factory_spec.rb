@@ -10,6 +10,14 @@ RSpec.describe Factory do
     end
   end
 
+  it 'should have same accessors as Struct' do
+      expect(Factory.ancestors[1..-1]).to eq Struct.ancestors[1..-1]
+  end
+
+  it 'should have same instance_methods as Struct' do
+      expect(Factory.instance_methods(false)).to eq Struct.instance_methods(false)
+  end
+
   describe 'create class' do
     it 'should have all attribute accessors' do
       accessors = %i{name address}
@@ -21,17 +29,23 @@ RSpec.describe Factory do
     end
   end
 
+   describe 'create Anonymous class' do
+    it 'should create anonymous class of type Class' do
+      expect(Factory.new('Anoni', :name).class).to eq Class
+    end
+
+    it 'should create instance of anonymous class Factory::Anon' do
+      Factory.new('Anon', :name)
+      anon = Factory::Anon.new("Anon_name")
+      expect(anon).to be_instance_of Factory::Anon
+    end
+  end
+
   describe 'create instance' do
     let(:person) { Person.new('Jane Doe', 'LA, Greenwood Sq 223') }
 
     it 'should create instance of Person cls' do
       expect(person).to be_instance_of Person
-    end
-
-    it 'should create instance of Factory::MyCls' do
-      Factory.new('MyCls', :name)
-      my_cls = Factory::MyCls.new('Instance Name')
-      expect(my_cls).to be_instance_of Factory::MyCls
     end
 
     it 'raise error when creating instance with wrong arguments number' do
@@ -54,7 +68,16 @@ RSpec.describe Factory do
     it 'posible getting access to instance attr by [0]' do
       expect(person[1]).to eq 'LA, Greenwood Sq 223'
     end
+
+    it 'posible getting access to instance attr by [-indx]' do
+      expect(person[-1]).to eq 'LA, Greenwood Sq 223'
+    end
+
+    it 'raise error when trying get instance attr by wrong index' do
+      expect { person[-10] }.to raise_error  "wrong index range"
+    end
   end
+
   describe 'instance_methods' do
     let(:person) { Person.new('Jane Doe', 'LA, Greenwood Sq 223') }
 
@@ -118,6 +141,26 @@ RSpec.describe Factory do
       person.each_pair { |k, v| str << [k, v] }
       expect(str).to eq [[:name, 'Jane Doe'],
                          [:address, 'LA, Greenwood Sq 223']]
+    end
+
+    it ':select Returns new array of member (attr) (equivalent to Enumerable#select)' do
+      expect(person.select { |x| x.length<=8 }).to eq ['Jane Doe']
+    end
+
+    #for testing :dig method
+    Foo = Factory.new(:a)
+    let (:f) { Foo.new([['a', 'b', [:c, 'cc']], 2, 3]) }
+
+    it ':dig Extracts the nested value specified by the sequence of key' do
+      expect(f.dig(:a, 0, 2, 0)).to eq :c
+    end
+
+    it ':dig Returns nil if index out of range' do
+      expect(f.dig(:a, 3)).to eq nil
+    end
+
+    it ':dig Raise error of conversion if can\'t find specified path' do
+      expect{ f.dig(:a, :b) }.to raise_error "no implicit conversion of Symbol into Integer"
     end
 
     it ':to_s and :inspect Return instance in string form' do
